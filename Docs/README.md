@@ -6,10 +6,14 @@ This repository includes two games implemented entirely in C++ for Unreal Engine
 
 ## Documentation Index
 
-- [**Scene Setup & Gameplay Guide**](file:///c:/Unreal%20Projects/LearnUnreal_56_1/Docs/SCENE_SETUP_AND_PLAY_GUIDE.md)
-  - Detailed step-by-step instructions on setting up levels (`.umap`), configuring lighting, setting GameMode overrides in World Settings, running in PIE, tweaking gameplay values, and troubleshooting.
-- [**Unity Developer to Unreal C++ Rosetta Stone & Architecture Guide**](file:///c:/Unreal%20Projects/LearnUnreal_56_1/TUTORIAL_UNITY_TO_UNREAL.md)
-  - Full conceptual comparison between Unity and Unreal (`GameObject` $\leftrightarrow$ `AActor`, `MonoBehaviour` $\leftrightarrow$ `UActorComponent`, `Update` $\leftrightarrow$ `Tick`, etc.), coordinate system specifics (Centimeters, $Z$-Up), and code breakdowns for both games.
+- [**Cross-Language Architecture Comparison Guide**](file:///c:/Unreal%20Projects/LearnUnreal_56_1/ARCHITECTURE_COMPARISON.md)
+  - Side-by-side comparison of **Flappy Bird** and **Tetris** implemented across **Unreal C++**, **Unity C#**, **Python (Tkinter)**, and **Java (Swing)**, including coordinate conversions, pivot checks, memory management, and game loop lifecycles.
+- [**Unity3D C# Implementations**](file:///c:/Unreal%20Projects/LearnUnreal_56_1/Games_Unity_CSharp/README.md)
+  - Ready-to-import Unity C# scripts for both games with explicit center-pivot offset calculations.
+- [**Python Implementations**](file:///c:/Unreal%20Projects/LearnUnreal_56_1/Games_Python/README.md)
+  - Standalone, zero-dependency 60 FPS playable games in standard Python Tkinter.
+- [**Java Implementations**](file:///c:/Unreal%20Projects/LearnUnreal_56_1/Games_Java/README.md)
+  - Standalone, pre-compiled Java Swing games with automatic build & run scripts.
 
 ---
 

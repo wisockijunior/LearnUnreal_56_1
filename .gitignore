@@ -48,3 +48,9 @@ Content/Collections/
 .DS_Store
 Thumbs.db
 Desktop.ini
+
+# Python & Java build artifacts
+__pycache__/
+*.pyc
+Games_Java/**/bin/
+*.class
