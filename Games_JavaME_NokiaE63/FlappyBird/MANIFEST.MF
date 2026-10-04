@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+MIDlet-1: Flappy Bird, , flappy.FlappyMIDlet
+MIDlet-Name: Flappy Bird (Nokia E63)
+MIDlet-Vendor: Renato
+MIDlet-Version: 1.0.0
+MicroEdition-Configuration: CLDC-1.1
+MicroEdition-Profile: MIDP-2.0
+Nokia-MIDlet-Original-Display-Size: 320,240
+Nokia-MIDlet-Target-Display-Size: 320,240
+

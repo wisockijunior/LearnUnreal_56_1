@@ -53,4 +53,6 @@ Desktop.ini
 __pycache__/
 *.pyc
 Games_Java/**/bin/
+Games_JavaME_NokiaE63/**/bin/
+.rms_data/
 *.class

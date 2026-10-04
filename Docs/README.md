@@ -12,8 +12,10 @@ This repository includes two games implemented entirely in C++ for Unreal Engine
   - Ready-to-import Unity C# scripts for both games with explicit center-pivot offset calculations.
 - [**Python Implementations**](file:///c:/Unreal%20Projects/LearnUnreal_56_1/Games_Python/README.md)
   - Standalone, zero-dependency 60 FPS playable games in standard Python Tkinter.
-- [**Java Implementations**](file:///c:/Unreal%20Projects/LearnUnreal_56_1/Games_Java/README.md)
+- [**Java (Swing) Desktop Implementations**](file:///c:/Unreal%20Projects/LearnUnreal_56_1/Games_Java/README.md)
   - Standalone, pre-compiled Java Swing games with automatic build & run scripts.
+- [**Nokia E63 J2ME (MIDP 2.0 / CLDC 1.1) Implementations**](file:///c:/Unreal%20Projects/LearnUnreal_56_1/Games_JavaME_NokiaE63/README.md)
+  - Authentic 320x240 landscape J2ME games for Nokia E63 (Symbian S60 3rd Ed.), packaged `.jar` / `.jad` files, and interactive desktop hardware simulator.
 
 ---
 

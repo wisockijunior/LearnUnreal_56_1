@@ -1,0 +1,12 @@
+MIDlet-1: Flappy Bird, , flappy.FlappyMIDlet
+MIDlet-Name: Flappy Bird (Nokia E63)
+MIDlet-Vendor: Renato
+MIDlet-Version: 1.0.0
+MicroEdition-Configuration: CLDC-1.1
+MicroEdition-Profile: MIDP-2.0
+MIDlet-Description: Flappy Bird retro J2ME game for Nokia E63
+Nokia-MIDlet-Original-Display-Size: 320,240
+Nokia-MIDlet-Target-Display-Size: 320,240
+Nokia-MIDlet-Category: Game
+MIDlet-Jar-Size: 6113 
+MIDlet-Jar-URL: FlappyBird.jar 
