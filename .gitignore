@@ -1,0 +1,50 @@
+# Unreal Engine 5 .gitignore
+# Visual Studio / Rider / VS Code
+.vs/
+*.sln
+*.suo
+*.user
+*.useroscheme
+*.userprefs
+*.docstates
+*.opensdf
+*.sdf
+*.VC.db
+*.VC.opendb
+*.VC.VC.opendb
+.idea/
+.vscode/
+*.swp
+*~
+UpgradeLog.htm
+UpgradeLog.XML
+
+# Unreal Engine generated directories
+Binaries/
+DerivedDataCache/
+Intermediate/
+Saved/
+Build/
+
+# Unreal Engine project files
+*.xcodeproj
+*.xcworkspace
+
+# Package build output
+*.apk
+*.ipa
+*.app
+
+# Auto-saved and backup files in Content
+Content/Developers/
+Content/Collections/
+
+# Crash dumps & memory profiles
+*.dmp
+*.crashmindump
+*.log
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
