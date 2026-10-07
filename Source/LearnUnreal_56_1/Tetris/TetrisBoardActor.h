@@ -39,6 +39,22 @@ public:
 	int32 GetNextPieceType() const { return NextPieceType; }
 	bool IsGameOver() const { return bGameOver; }
 
+	// Automated testing methods
+	UFUNCTION(BlueprintCallable, Category = "Tetris|Testing")
+	int32 GetOccupiedSlotCount() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Tetris|Testing")
+	int32 GetFreeSlotCount() const;
+
+	UFUNCTION(BlueprintCallable, Category = "Tetris|Testing")
+	void SetSpawningEnabled(bool bEnabled);
+
+	UFUNCTION(BlueprintCallable, Category = "Tetris|Testing")
+	void SpawnSpecificPiece(int32 PieceType);
+
+	UFUNCTION(BlueprintCallable, Exec, Category = "Tetris|Testing")
+	bool RunAutomatedTest();
+
 protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	USceneComponent* SceneRoot;
@@ -88,6 +104,7 @@ private:
 	int32 LinesCleared;
 	int32 Level;
 	bool bGameOver;
+	bool bSpawningEnabled;
 
 	UPROPERTY()
 	UStaticMesh* CubeMesh;

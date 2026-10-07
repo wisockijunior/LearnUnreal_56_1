@@ -55,6 +55,7 @@ void ATetrisPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 		PlayerInputComponent->BindKey(EKeys::Enter, IE_Pressed, this, &ATetrisPawn::HardDrop);
 
 		PlayerInputComponent->BindKey(EKeys::R, IE_Pressed, this, &ATetrisPawn::RestartGame);
+		PlayerInputComponent->BindKey(EKeys::T, IE_Pressed, this, &ATetrisPawn::TriggerAutomatedTest);
 	}
 }
 
@@ -119,5 +120,13 @@ void ATetrisPawn::RestartGame()
 	if (ATetrisBoardActor* Board = GetBoardActor())
 	{
 		Board->RestartGame();
+	}
+}
+
+void ATetrisPawn::TriggerAutomatedTest()
+{
+	if (ATetrisBoardActor* Board = GetBoardActor())
+	{
+		Board->RunAutomatedTest();
 	}
 }

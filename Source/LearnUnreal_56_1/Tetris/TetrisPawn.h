@@ -26,6 +26,7 @@ public:
 	void SoftDrop();
 	void HardDrop();
 	void RestartGame();
+	void TriggerAutomatedTest();
 
 protected:
 	virtual void BeginPlay() override;

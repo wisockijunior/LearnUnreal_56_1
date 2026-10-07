@@ -56,7 +56,7 @@ void ATetrisHUD::DrawHUD()
 	DrawShadowedText(TEXT("NEXT"), ScreenCenterX + 210.0f, 140.0f, FLinearColor(1.0f, 0.85f, 0.1f), 1.4f);
 
 	// Bottom Controls Help
-	const FString ControlsText = TEXT("[A / D] Move    [W / Up] Rotate    [S / Down] Soft Drop    [Space] Hard Drop    [R] Restart");
+	const FString ControlsText = TEXT("[A / D] Move   [W / Up] Rotate   [S / Down] Soft Drop   [Space] Hard Drop   [R] Restart   [T] Auto Test");
 	DrawCenteredString(ControlsText, ScreenCenterX, Canvas->ClipY - 45.0f, FLinearColor(0.85f, 0.85f, 0.85f), 1.05f);
 
 	// Game Over Overlay

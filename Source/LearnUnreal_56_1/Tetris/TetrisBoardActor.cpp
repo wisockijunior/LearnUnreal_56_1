@@ -87,6 +87,7 @@ ATetrisBoardActor::ATetrisBoardActor()
 	, LinesCleared(0)
 	, Level(1)
 	, bGameOver(false)
+	, bSpawningEnabled(true)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -416,7 +417,21 @@ void ATetrisBoardActor::LockPiece()
 
 	ClearLines();
 	RebuildGridVisuals();
-	SpawnNewPiece();
+
+	if (bSpawningEnabled)
+	{
+		SpawnNewPiece();
+	}
+	else
+	{
+		for (UStaticMeshComponent* Block : ActivePieceBlocks)
+		{
+			if (Block)
+			{
+				Block->SetVisibility(false);
+			}
+		}
+	}
 }
 
 void ATetrisBoardActor::ClearLines()
@@ -560,4 +575,142 @@ FLinearColor ATetrisBoardActor::GetPieceColor(int32 PieceType) const
 	case 7: return FLinearColor(1.0f, 0.5f, 0.05f);   // Orange (L)
 	default: return FLinearColor::White;
 	}
+}
+
+int32 ATetrisBoardActor::GetOccupiedSlotCount() const
+{
+	int32 Count = 0;
+	for (int32 r = 0; r < GRID_ROWS; ++r)
+	{
+		for (int32 c = 0; c < GRID_COLS; ++c)
+		{
+			if (Grid[r][c] != 0)
+			{
+				Count++;
+			}
+		}
+	}
+	return Count;
+}
+
+int32 ATetrisBoardActor::GetFreeSlotCount() const
+{
+	return (GRID_ROWS * GRID_COLS) - GetOccupiedSlotCount();
+}
+
+void ATetrisBoardActor::SetSpawningEnabled(bool bEnabled)
+{
+	bSpawningEnabled = bEnabled;
+}
+
+void ATetrisBoardActor::SpawnSpecificPiece(int32 PieceType)
+{
+	CurrentPieceType = PieceType;
+	CurrentRotation = 0;
+	CurrentCol = 4;
+	CurrentRow = 18;
+
+	UpdateActivePieceVisuals();
+}
+
+bool ATetrisBoardActor::RunAutomatedTest()
+{
+	UE_LOG(LogTemp, Warning, TEXT("========================================"));
+	UE_LOG(LogTemp, Warning, TEXT("TETRIS AUTOMATED SIMULATION TEST START"));
+	UE_LOG(LogTemp, Warning, TEXT("========================================"));
+
+	bool bSuccess = true;
+
+	// Reset game to clean board
+	RestartGame();
+
+	// Step 1: Start with an L piece (Piece 7)
+	SpawnSpecificPiece(7);
+	UE_LOG(LogTemp, Display, TEXT("[Step 1] Spawned L piece (Type 7). Start Col: %d, Row: %d"), CurrentCol, CurrentRow);
+
+	// Step 2: Rotate L piece
+	RotatePiece();
+	UE_LOG(LogTemp, Display, TEXT("[Step 2] Rotated L piece. Current Rotation: %d"), CurrentRotation);
+
+	// Step 3: Move left 1 slot
+	MoveLeft();
+	UE_LOG(LogTemp, Display, TEXT("[Step 3] Moved Left 1 slot. Current Col: %d"), CurrentCol);
+
+	// Prepare next piece to be S piece (Type 4)
+	NextPieceType = 4;
+	UpdateNextPieceVisuals();
+
+	// Step 4: Drop using Space (HardDrop)
+	HardDrop();
+	UE_LOG(LogTemp, Display, TEXT("[Step 4] Executed HardDrop (simulating Space key)."));
+
+	// Verification 1: Check occupied and free slots
+	const int32 Occupied1 = GetOccupiedSlotCount();
+	const int32 Free1 = GetFreeSlotCount();
+	UE_LOG(LogTemp, Display, TEXT(">> Verification 1: Occupied Slots = %d (Expected: 4), Free Slots = %d (Expected: 196)"), Occupied1, Free1);
+
+	if (Occupied1 == 4 && Free1 == 196)
+	{
+		UE_LOG(LogTemp, Display, TEXT("   -> TEST 1 PASSED: Exactly 4 slots occupied on board!"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("   -> TEST 1 FAILED: Expected 4 occupied slots, got %d!"), Occupied1);
+		bSuccess = false;
+	}
+
+	// Step 5: Active piece is now the newly spawned S piece (Type 4)
+	UE_LOG(LogTemp, Display, TEXT("[Step 5] S piece active at Col: %d, Row: %d"), CurrentCol, CurrentRow);
+
+	// Step 6: Move 1 slot to the right
+	MoveRight();
+	UE_LOG(LogTemp, Display, TEXT("[Step 6] Moved Right 1 slot. Current Col: %d"), CurrentCol);
+
+	// Step 7: Disable spawning of new pieces
+	SetSpawningEnabled(false);
+	UE_LOG(LogTemp, Display, TEXT("[Step 7] Disabled spawning of new pieces."));
+
+	// Step 8: Drop with Space
+	HardDrop();
+	UE_LOG(LogTemp, Display, TEXT("[Step 8] Executed HardDrop (simulating Space key) with spawning disabled."));
+
+	// Verification 2: Check occupied and free slots
+	const int32 Occupied2 = GetOccupiedSlotCount();
+	const int32 Free2 = GetFreeSlotCount();
+	UE_LOG(LogTemp, Display, TEXT(">> Verification 2: Occupied Slots = %d (Expected: 8), Free Slots = %d (Expected: 192)"), Occupied2, Free2);
+
+	if (Occupied2 == 8 && Free2 == 192)
+	{
+		UE_LOG(LogTemp, Display, TEXT("   -> TEST 2 PASSED: Exactly 8 slots occupied on board!"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("   -> TEST 2 FAILED: Expected 8 occupied slots, got %d!"), Occupied2);
+		bSuccess = false;
+	}
+
+	// Re-enable spawning
+	SetSpawningEnabled(true);
+
+	UE_LOG(LogTemp, Warning, TEXT("========================================"));
+	if (bSuccess)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ALL TETRIS AUTOMATED TESTS PASSED!"));
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("TETRIS AUTOMATED TESTS FAILED!"));
+	}
+	UE_LOG(LogTemp, Warning, TEXT("========================================"));
+
+	// On screen notification
+	if (GEngine)
+	{
+		const FColor MsgColor = bSuccess ? FColor::Green : FColor::Red;
+		const FString Summary = FString::Printf(TEXT("Tetris Test: %s (Slots: %d/200 occupied, %d/200 free)"),
+			bSuccess ? TEXT("PASSED") : TEXT("FAILED"), Occupied2, Free2);
+		GEngine->AddOnScreenDebugMessage(-1, 8.0f, MsgColor, Summary);
+	}
+
+	return bSuccess;
 }
