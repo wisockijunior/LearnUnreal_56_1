@@ -151,7 +151,7 @@ void ATetrisBoardActor::BeginPlay()
 	InitBoardVisuals();
 	CreateFrame();
 
-	FMath::SRand(FPlatformTime::Cycles());
+	FMath::RandInit(FPlatformTime::Cycles());
 	NextPieceType = FMath::RandRange(1, 7);
 
 	RestartGame();
