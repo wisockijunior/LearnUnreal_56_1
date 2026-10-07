@@ -399,8 +399,12 @@ void ATetrisBoardActor::HardDrop()
 		DropDistance++;
 	}
 
+	// Scoring: 2 pts per row. A full drop from spawn (row 18) to the floor = 16 rows = +32.
+	// If you ever see +64 for a single Space press, HardDrop ran twice (see Docs/TETRIS_HARD_DROP_FIX.md).
 	Score += DropDistance * 2;
+	// Diagnostic counter shown on the HUD ("DROPS"). Must increase by exactly 1 per Space press.
 	DropCount++;
+	// Reset gravity timer so Tick() doesn't immediately move/lock the freshly spawned piece.
 	DropTimer = 0.0f;
 	LockPiece();
 }

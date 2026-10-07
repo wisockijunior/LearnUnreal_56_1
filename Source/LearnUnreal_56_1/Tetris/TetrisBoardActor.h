@@ -37,6 +37,7 @@ public:
 	int32 GetLinesCleared() const { return LinesCleared; }
 	int32 GetLevel() const { return Level; }
 	int32 GetNextPieceType() const { return NextPieceType; }
+	// Number of hard drops performed. Displayed on HUD as a diagnostic for the double-drop bug.
 	int32 GetDropCount() const { return DropCount; }
 	bool IsGameOver() const { return bGameOver; }
 

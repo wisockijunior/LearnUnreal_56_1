@@ -7,6 +7,11 @@
 
 #if WITH_DEV_AUTOMATION_TESTS
 
+// NOTE (UE 5.5+ API change): ApplicationContextMask is no longer a member of the
+// EAutomationTestFlags enum. It is now a standalone constexpr named
+// EAutomationTestFlags_ApplicationContextMask (see Engine/Source/Runtime/Core/Public/Misc/AutomationTest.h).
+// Using the old "EAutomationTestFlags::ApplicationContextMask" fails with C2838/C2065 and breaks the
+// whole module build -- which silently kept the editor running a stale binary. See Docs/TETRIS_HARD_DROP_FIX.md.
 IMPLEMENT_SIMPLE_AUTOMATION_TEST(FTetrisDropSimulationTest, "LearnUnreal.Tetris.DropSimulation", EAutomationTestFlags_ApplicationContextMask | EAutomationTestFlags::ProductFilter)
 
 bool FTetrisDropSimulationTest::RunTest(const FString& Parameters)

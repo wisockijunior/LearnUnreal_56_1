@@ -33,6 +33,11 @@ void ATetrisPawn::BeginPlay()
 void ATetrisPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	// IMPORTANT: Do NOT poll input here (e.g. PC->WasInputKeyJustPressed(EKeys::SpaceBar)).
+	// Keys are already handled by BindKey in SetupPlayerInputComponent. Polling here as well
+	// caused HardDrop to run twice per press (the "two pieces dropped" bug).
+	// See Docs/TETRIS_HARD_DROP_FIX.md.
 }
 
 void ATetrisPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -53,6 +58,8 @@ void ATetrisPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 		PlayerInputComponent->BindKey(EKeys::S, IE_Pressed, this, &ATetrisPawn::SoftDrop);
 		PlayerInputComponent->BindKey(EKeys::Down, IE_Pressed, this, &ATetrisPawn::SoftDrop);
 
+		// Hard Drop: bind BOTH Pressed and Released so we can implement a release-gate.
+		// (Unity analogy: Input.GetKeyDown + Input.GetKeyUp, but event-driven instead of polled.)
 		PlayerInputComponent->BindKey(EKeys::SpaceBar, IE_Pressed, this, &ATetrisPawn::OnHardDropPressed);
 		PlayerInputComponent->BindKey(EKeys::SpaceBar, IE_Released, this, &ATetrisPawn::OnHardDropReleased);
 		PlayerInputComponent->BindKey(EKeys::Enter, IE_Pressed, this, &ATetrisPawn::OnHardDropPressed);
@@ -104,14 +111,31 @@ void ATetrisPawn::SoftDrop()
 	}
 }
 
+// =====================================================================================
+// HARD DROP INPUT HANDLING -- "one Space press == exactly one piece dropped"
+// Full write-up: Docs/TETRIS_HARD_DROP_FIX.md
+//
+// Original bug: HardDrop() fired TWICE in the same frame (BindKey callback + a second
+// WasInputKeyJustPressed() poll in Tick). Call #1 locked piece A and spawned piece B,
+// call #2 instantly hard-dropped piece B too -> two pieces landed, score +64 instead of +32.
+//
+// Protection layers:
+//   Layer 1: Single input source. Tick() no longer polls keys; only BindKey drives drops.
+//   Layer 2: Debounce. Reject a drop within 0.2s of the previous one (LastHardDropTime).
+//   Layer 3: Release-gate. bCanHardDrop is cleared on press and only re-armed on release,
+//            so OS key-repeat or holding Space can never chain extra drops.
+// =====================================================================================
 void ATetrisPawn::OnHardDropPressed()
 {
+	// Layer 3: release-gate -- ignore until the key has been physically released.
 	if (!bCanHardDrop)
 	{
 		return;
 	}
 	bCanHardDrop = false;
 
+	// Layer 2: debounce -- guards against duplicate events arriving within the same short window
+	// (e.g. Space + Enter pressed together, or a duplicated binding).
 	const double CurrentTime = FPlatformTime::Seconds();
 	if (CurrentTime - LastHardDropTime < 0.2)
 	{
@@ -125,11 +149,14 @@ void ATetrisPawn::OnHardDropPressed()
 	}
 }
 
+// Re-arms the release-gate (Layer 3). Bound to IE_Released for Space and Enter.
 void ATetrisPawn::OnHardDropReleased()
 {
 	bCanHardDrop = true;
 }
 
+// Legacy entry point kept for API compatibility; routes through the guarded path.
+// NOTE: not bound to any key. If called from code, the gate stays closed until a key release.
 void ATetrisPawn::HardDrop()
 {
 	OnHardDropPressed();

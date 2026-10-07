@@ -14,6 +14,8 @@ This repository includes two games implemented entirely in C++ for Unreal Engine
   - Focused breakdown of all C++ folders (`TopDown`, `Variant_Strategy`, `Variant_TwinStick`, `Flappy`, `Tetris`), class responsibilities, and mapping to Content Blueprint subclasses.
 - [**Scene Setup & Gameplay Guide**](file:///c:/Unreal%20Projects/LearnUnreal_56_1/Docs/SCENE_SETUP_AND_PLAY_GUIDE.md)
   - Step-by-step instructions on setting up levels (`.umap`), configuring lighting, setting GameMode overrides in World Settings, running in PIE, and tweaking gameplay values.
+- [**Tetris Hard Drop Fix (Post-Mortem)**](file:///c:/Unreal%20Projects/LearnUnreal_56_1/Docs/TETRIS_HARD_DROP_FIX.md)
+  - Why one Space press dropped two pieces, why the fixes seemed not to work (a stale binary after failed Live Coding builds), and the 3-layer input fix (single input source, debounce, release-gate).
 - [**Unity Developer to Unreal C++ Rosetta Stone**](file:///c:/Unreal%20Projects/LearnUnreal_56_1/TUTORIAL_UNITY_TO_UNREAL.md)
   - Full conceptual comparison between Unity and Unreal (`GameObject` $\leftrightarrow$ `AActor`, `MonoBehaviour` $\leftrightarrow$ `UActorComponent`, `Update` $\leftrightarrow$ `Tick`, etc.), coordinate system specifics (Centimeters, $Z$-Up), and code breakdowns.
 - [**Cross-Language Architecture Comparison Guide**](file:///c:/Unreal%20Projects/LearnUnreal_56_1/ARCHITECTURE_COMPARISON.md)

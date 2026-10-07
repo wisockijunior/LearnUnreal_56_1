@@ -45,6 +45,10 @@ private:
 	UPROPERTY()
 	ATetrisBoardActor* CachedBoard;
 
+	// --- Hard Drop duplicate-press protection (see Docs/TETRIS_HARD_DROP_FIX.md) ---
+	// Layer 2: time-based debounce. Ignores a second HardDrop within 0.2s of the last one.
 	double LastHardDropTime;
+	// Layer 3: key release-gate. Set false on IE_Pressed, true again only on IE_Released,
+	// so one physical key press == exactly one drop (immune to OS key-repeat / held keys).
 	bool bCanHardDrop;
 };
