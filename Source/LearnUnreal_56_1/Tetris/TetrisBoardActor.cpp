@@ -164,13 +164,15 @@ void ATetrisBoardActor::InitBoardVisuals()
 		return;
 	}
 
-	// Assign materials to ISMs
+	// Assign materials to ISMs and cache them
+	PieceMaterials.SetNum(8);
 	for (int32 i = 1; i <= 7; ++i)
 	{
 		UMaterialInstanceDynamic* DynMat = UMaterialInstanceDynamic::Create(BaseMaterial, this);
 		if (DynMat)
 		{
 			DynMat->SetVectorParameterValue(TEXT("Color"), GetPieceColor(i));
+			PieceMaterials[i] = DynMat;
 			PieceISMs[i]->SetMaterial(0, DynMat);
 		}
 	}
@@ -395,6 +397,7 @@ void ATetrisBoardActor::HardDrop()
 	}
 
 	Score += DropDistance * 2;
+	DropTimer = 0.0f;
 	LockPiece();
 }
 
@@ -472,13 +475,9 @@ void ATetrisBoardActor::ClearLines()
 
 void ATetrisBoardActor::UpdateActivePieceVisuals()
 {
-	if (!BaseMaterial) return;
-
-	UMaterialInstanceDynamic* PieceMat = UMaterialInstanceDynamic::Create(BaseMaterial, this);
-	if (PieceMat)
-	{
-		PieceMat->SetVectorParameterValue(TEXT("Color"), GetPieceColor(CurrentPieceType));
-	}
+	UMaterialInstanceDynamic* PieceMat = (CurrentPieceType >= 1 && CurrentPieceType <= 7 && PieceMaterials.IsValidIndex(CurrentPieceType))
+		? PieceMaterials[CurrentPieceType]
+		: nullptr;
 
 	for (int32 i = 0; i < 4; ++i)
 	{
@@ -486,7 +485,7 @@ void ATetrisBoardActor::UpdateActivePieceVisuals()
 		const int32 R = CurrentRow + PIECE_SHAPES[CurrentPieceType][CurrentRotation][i].dRow;
 
 		ActivePieceBlocks[i]->SetVisibility(true);
-		ActivePieceBlocks[i]->SetWorldLocation(GridToWorldLocation(C, R));
+		ActivePieceBlocks[i]->SetRelativeLocation(GridToLocalLocation(C, R));
 		if (PieceMat)
 		{
 			ActivePieceBlocks[i]->SetMaterial(0, PieceMat);
@@ -496,15 +495,11 @@ void ATetrisBoardActor::UpdateActivePieceVisuals()
 
 void ATetrisBoardActor::UpdateNextPieceVisuals()
 {
-	if (!BaseMaterial) return;
+	UMaterialInstanceDynamic* NextMat = (NextPieceType >= 1 && NextPieceType <= 7 && PieceMaterials.IsValidIndex(NextPieceType))
+		? PieceMaterials[NextPieceType]
+		: nullptr;
 
-	UMaterialInstanceDynamic* NextMat = UMaterialInstanceDynamic::Create(BaseMaterial, this);
-	if (NextMat)
-	{
-		NextMat->SetVectorParameterValue(TEXT("Color"), GetPieceColor(NextPieceType));
-	}
-
-	// Preview placed at Y = 280, Z = 600
+	// Preview placed at Y = 280, Z = 600 in local coordinates
 	const FVector PreviewCenter(0.0f, 280.0f, 600.0f);
 
 	for (int32 i = 0; i < 4; ++i)
@@ -514,7 +509,7 @@ void ATetrisBoardActor::UpdateNextPieceVisuals()
 
 		const FVector BlockLoc = PreviewCenter + FVector(0.0f, dC * CELL_SIZE, dR * CELL_SIZE);
 		NextPieceBlocks[i]->SetVisibility(true);
-		NextPieceBlocks[i]->SetWorldLocation(BlockLoc);
+		NextPieceBlocks[i]->SetRelativeLocation(BlockLoc);
 		if (NextMat)
 		{
 			NextPieceBlocks[i]->SetMaterial(0, NextMat);
@@ -530,7 +525,7 @@ void ATetrisBoardActor::RebuildGridVisuals()
 		PieceISMs[i]->ClearInstances();
 	}
 
-	// Add instances for all locked cells
+	// Add instances for all locked cells in local space
 	for (int32 r = 0; r < GRID_ROWS; ++r)
 	{
 		for (int32 c = 0; c < GRID_COLS; ++c)
@@ -538,18 +533,18 @@ void ATetrisBoardActor::RebuildGridVisuals()
 			const int32 Type = Grid[r][c];
 			if (Type >= 1 && Type <= 7)
 			{
-				FTransform InstanceTransform(FRotator::ZeroRotator, GridToWorldLocation(c, r), FVector(0.36f, 0.36f, 0.36f));
+				FTransform InstanceTransform(FRotator::ZeroRotator, GridToLocalLocation(c, r), FVector(0.36f, 0.36f, 0.36f));
 				PieceISMs[Type]->AddInstance(InstanceTransform);
 			}
 		}
 	}
 }
 
-FVector ATetrisBoardActor::GridToWorldLocation(int32 Col, int32 Row) const
+FVector ATetrisBoardActor::GridToLocalLocation(int32 Col, int32 Row) const
 {
-	const float WorldY = (static_cast<float>(Col) - 4.5f) * CELL_SIZE;
-	const float WorldZ = (static_cast<float>(Row) + 0.5f) * CELL_SIZE;
-	return GetActorLocation() + FVector(0.0f, WorldY, WorldZ);
+	const float LocalY = (static_cast<float>(Col) - 4.5f) * CELL_SIZE;
+	const float LocalZ = (static_cast<float>(Row) + 0.5f) * CELL_SIZE;
+	return FVector(0.0f, LocalY, LocalZ);
 }
 
 FLinearColor ATetrisBoardActor::GetPieceColor(int32 PieceType) const

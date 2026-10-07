@@ -7,6 +7,7 @@
 
 ATetrisPawn::ATetrisPawn()
 	: CachedBoard(nullptr)
+	, LastHardDropTime(0.0)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -30,35 +31,6 @@ void ATetrisPawn::BeginPlay()
 void ATetrisPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	APlayerController* PC = Cast<APlayerController>(GetController());
-	if (PC)
-	{
-		if (PC->WasInputKeyJustPressed(EKeys::A) || PC->WasInputKeyJustPressed(EKeys::Left))
-		{
-			MoveLeft();
-		}
-		else if (PC->WasInputKeyJustPressed(EKeys::D) || PC->WasInputKeyJustPressed(EKeys::Right))
-		{
-			MoveRight();
-		}
-		else if (PC->WasInputKeyJustPressed(EKeys::W) || PC->WasInputKeyJustPressed(EKeys::Up))
-		{
-			RotatePiece();
-		}
-		else if (PC->WasInputKeyJustPressed(EKeys::S) || PC->WasInputKeyJustPressed(EKeys::Down))
-		{
-			SoftDrop();
-		}
-		else if (PC->WasInputKeyJustPressed(EKeys::SpaceBar) || PC->WasInputKeyJustPressed(EKeys::Enter))
-		{
-			HardDrop();
-		}
-		else if (PC->WasInputKeyJustPressed(EKeys::R))
-		{
-			RestartGame();
-		}
-	}
 }
 
 void ATetrisPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -129,6 +101,13 @@ void ATetrisPawn::SoftDrop()
 
 void ATetrisPawn::HardDrop()
 {
+	const double CurrentTime = FPlatformTime::Seconds();
+	if (CurrentTime - LastHardDropTime < 0.15)
+	{
+		return;
+	}
+	LastHardDropTime = CurrentTime;
+
 	if (ATetrisBoardActor* Board = GetBoardActor())
 	{
 		Board->HardDrop();

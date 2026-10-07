@@ -65,8 +65,11 @@ private:
 	void UpdateActivePieceVisuals();
 	void UpdateNextPieceVisuals();
 	void RebuildGridVisuals();
-	FVector GridToWorldLocation(int32 Col, int32 Row) const;
+	FVector GridToLocalLocation(int32 Col, int32 Row) const;
 	FLinearColor GetPieceColor(int32 PieceType) const;
+
+	UPROPERTY()
+	TArray<UMaterialInstanceDynamic*> PieceMaterials;
 
 	// Board state: 0 = empty, 1..7 = piece type color
 	int32 Grid[GRID_ROWS][GRID_COLS];

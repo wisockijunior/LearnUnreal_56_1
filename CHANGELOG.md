@@ -35,3 +35,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Fixed compilation error `C2660: 'FGenericPlatformMath::SRand': function does not take 1 arguments` in `ATetrisBoardActor.cpp` by replacing it with `FMath::RandInit(FPlatformTime::Cycles())`.
+- Fixed Tetris piece duplication bug when pressing Space (Hard Drop) by removing duplicate input polling in `ATetrisPawn::Tick`, adding 150ms debounce to `HardDrop`, resetting `DropTimer` on piece lock, and standardizing all active/locked block transforms to component-relative coordinates (`GridToLocalLocation`).

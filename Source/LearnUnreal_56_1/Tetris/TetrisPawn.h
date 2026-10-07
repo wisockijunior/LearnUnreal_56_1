@@ -41,4 +41,6 @@ private:
 
 	UPROPERTY()
 	ATetrisBoardActor* CachedBoard;
+
+	double LastHardDropTime;
 };
