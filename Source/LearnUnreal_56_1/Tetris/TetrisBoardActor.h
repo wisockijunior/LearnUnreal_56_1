@@ -37,6 +37,7 @@ public:
 	int32 GetLinesCleared() const { return LinesCleared; }
 	int32 GetLevel() const { return Level; }
 	int32 GetNextPieceType() const { return NextPieceType; }
+	int32 GetDropCount() const { return DropCount; }
 	bool IsGameOver() const { return bGameOver; }
 
 	// Automated testing methods
@@ -103,6 +104,7 @@ private:
 	int32 Score;
 	int32 LinesCleared;
 	int32 Level;
+	int32 DropCount;
 	bool bGameOver;
 	bool bSpawningEnabled;
 

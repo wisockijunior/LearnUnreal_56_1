@@ -25,6 +25,8 @@ public:
 	void RotatePiece();
 	void SoftDrop();
 	void HardDrop();
+	void OnHardDropPressed();
+	void OnHardDropReleased();
 	void RestartGame();
 	void TriggerAutomatedTest();
 
@@ -44,4 +46,5 @@ private:
 	ATetrisBoardActor* CachedBoard;
 
 	double LastHardDropTime;
+	bool bCanHardDrop;
 };

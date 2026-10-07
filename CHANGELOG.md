@@ -35,9 +35,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - Fixed compilation error `C2660: 'FGenericPlatformMath::SRand': function does not take 1 arguments` in `ATetrisBoardActor.cpp` by replacing it with `FMath::RandInit(FPlatformTime::Cycles())`.
-- Fixed Tetris piece duplication bug when pressing Space (Hard Drop) by removing duplicate input polling in `ATetrisPawn::Tick`, adding 150ms debounce to `HardDrop`, resetting `DropTimer` on piece lock, and standardizing all active/locked block transforms to component-relative coordinates (`GridToLocalLocation`).
+- Fixed Tetris piece duplication bug when pressing Space (Hard Drop) by removing duplicate input polling in `ATetrisPawn::Tick`, adding debounce to `HardDrop`, resetting `DropTimer` on piece lock, and standardizing all active/locked block transforms to component-relative coordinates (`GridToLocalLocation`).
 - Added Automated Testing Suite for Tetris simulation:
   - Added slot query methods (`GetOccupiedSlotCount`, `GetFreeSlotCount`) and spawning control (`SetSpawningEnabled`, `SpawnSpecificPiece`).
   - Added in-game automated test execution (`RunAutomatedTest`) bound to key `[T]` and console command.
   - Added Unreal Engine Automation Test (`FTetrisDropSimulationTest` in `TetrisAutomationTest.cpp`).
   - Added standalone verification tool (`Docs/test_tetris_simulation.cpp`) confirming 4 occupied / 196 free after 1st drop, and 8 occupied / 192 free after 2nd drop.
+- Added Tetris HUD Drop Counter & Input Release-Gate:
+  - Added `DROPS` statistic counter to `ATetrisHUD` directly below `LINES` and exposed `GetDropCount()` from `ATetrisBoardActor`.
+  - Added strict key release-gate (`bCanHardDrop` reset on `IE_Released`) to `ATetrisPawn` preventing repeated drops while Space or Enter is held.
+  - Cleared UnrealBuildTool `Log.txt` file lock to allow Live Coding compilation.
+

@@ -86,6 +86,7 @@ ATetrisBoardActor::ATetrisBoardActor()
 	, Score(0)
 	, LinesCleared(0)
 	, Level(1)
+	, DropCount(0)
 	, bGameOver(false)
 	, bSpawningEnabled(true)
 {
@@ -267,6 +268,7 @@ void ATetrisBoardActor::RestartGame()
 	Score = 0;
 	LinesCleared = 0;
 	Level = 1;
+	DropCount = 0;
 	bGameOver = false;
 	CurrentDropInterval = BaseDropInterval;
 	DropTimer = 0.0f;
@@ -398,6 +400,7 @@ void ATetrisBoardActor::HardDrop()
 	}
 
 	Score += DropDistance * 2;
+	DropCount++;
 	DropTimer = 0.0f;
 	LockPiece();
 }

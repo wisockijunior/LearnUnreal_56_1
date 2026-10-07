@@ -8,6 +8,7 @@
 ATetrisPawn::ATetrisPawn()
 	: CachedBoard(nullptr)
 	, LastHardDropTime(0.0)
+	, bCanHardDrop(true)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -25,6 +26,7 @@ ATetrisPawn::ATetrisPawn()
 void ATetrisPawn::BeginPlay()
 {
 	Super::BeginPlay();
+	bCanHardDrop = true;
 	GetBoardActor();
 }
 
@@ -51,8 +53,10 @@ void ATetrisPawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 		PlayerInputComponent->BindKey(EKeys::S, IE_Pressed, this, &ATetrisPawn::SoftDrop);
 		PlayerInputComponent->BindKey(EKeys::Down, IE_Pressed, this, &ATetrisPawn::SoftDrop);
 
-		PlayerInputComponent->BindKey(EKeys::SpaceBar, IE_Pressed, this, &ATetrisPawn::HardDrop);
-		PlayerInputComponent->BindKey(EKeys::Enter, IE_Pressed, this, &ATetrisPawn::HardDrop);
+		PlayerInputComponent->BindKey(EKeys::SpaceBar, IE_Pressed, this, &ATetrisPawn::OnHardDropPressed);
+		PlayerInputComponent->BindKey(EKeys::SpaceBar, IE_Released, this, &ATetrisPawn::OnHardDropReleased);
+		PlayerInputComponent->BindKey(EKeys::Enter, IE_Pressed, this, &ATetrisPawn::OnHardDropPressed);
+		PlayerInputComponent->BindKey(EKeys::Enter, IE_Released, this, &ATetrisPawn::OnHardDropReleased);
 
 		PlayerInputComponent->BindKey(EKeys::R, IE_Pressed, this, &ATetrisPawn::RestartGame);
 		PlayerInputComponent->BindKey(EKeys::T, IE_Pressed, this, &ATetrisPawn::TriggerAutomatedTest);
@@ -100,10 +104,16 @@ void ATetrisPawn::SoftDrop()
 	}
 }
 
-void ATetrisPawn::HardDrop()
+void ATetrisPawn::OnHardDropPressed()
 {
+	if (!bCanHardDrop)
+	{
+		return;
+	}
+	bCanHardDrop = false;
+
 	const double CurrentTime = FPlatformTime::Seconds();
-	if (CurrentTime - LastHardDropTime < 0.15)
+	if (CurrentTime - LastHardDropTime < 0.2)
 	{
 		return;
 	}
@@ -113,6 +123,16 @@ void ATetrisPawn::HardDrop()
 	{
 		Board->HardDrop();
 	}
+}
+
+void ATetrisPawn::OnHardDropReleased()
+{
+	bCanHardDrop = true;
+}
+
+void ATetrisPawn::HardDrop()
+{
+	OnHardDropPressed();
 }
 
 void ATetrisPawn::RestartGame()

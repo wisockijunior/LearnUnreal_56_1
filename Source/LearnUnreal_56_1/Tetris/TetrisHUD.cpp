@@ -52,6 +52,9 @@ void ATetrisHUD::DrawHUD()
 	DrawShadowedText(TEXT("LINES"), StatLeft, 320.0f, FLinearColor(0.7f, 0.7f, 0.7f), 1.2f);
 	DrawShadowedText(FString::Printf(TEXT("%d"), Board->GetLinesCleared()), StatLeft, 350.0f, FLinearColor(0.3f, 1.0f, 0.4f), 1.8f);
 
+	DrawShadowedText(TEXT("DROPS"), StatLeft, 410.0f, FLinearColor(0.7f, 0.7f, 0.7f), 1.2f);
+	DrawShadowedText(FString::Printf(TEXT("%d"), Board->GetDropCount()), StatLeft, 440.0f, FLinearColor(0.3f, 0.85f, 1.0f), 1.8f);
+
 	// Next Piece Label on Right
 	DrawShadowedText(TEXT("NEXT"), ScreenCenterX + 210.0f, 140.0f, FLinearColor(1.0f, 0.85f, 0.1f), 1.4f);
 
