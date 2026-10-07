@@ -28,6 +28,7 @@ public class LearnUnreal_56_1 : ModuleRules
 
 		PublicIncludePaths.AddRange(new string[] {
 			"LearnUnreal_56_1",
+			"LearnUnreal_56_1/TopDown",
 			"LearnUnreal_56_1/Variant_Strategy",
 			"LearnUnreal_56_1/Variant_Strategy/UI",
 			"LearnUnreal_56_1/Variant_TwinStick",
