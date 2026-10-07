@@ -6,8 +6,12 @@ This repository includes two games implemented entirely in C++ for Unreal Engine
 
 ## Documentation Index
 
-- [**Project Folder Structure & Level Classes Breakdown**](file:///c:/Unreal%20Projects/LearnUnreal_56_1/Docs/Folder%20Structure%20Summary.md)
-  - Detailed breakdown of all C++ folders (`TopDown`, `Variant_Strategy`, `Variant_TwinStick`, `Flappy`, `Tetris`), class responsibilities, and mapping to Blueprint subclasses.
+- [**Folder Structure Overview**](file:///c:/Unreal%20Projects/LearnUnreal_56_1/Docs/Folder%20Structure%20Overview.md)
+  - Quick, clean ASCII tree overview of all game implementations (Unreal C++, Unity C#, Python, Java Swing, and Nokia E63 J2ME).
+- [**Workspace Folder Structure & Architecture Reference**](file:///c:/Unreal%20Projects/LearnUnreal_56_1/Docs/Folder%20Structure.md)
+  - Complete repository tree mapping root files, Unreal Engine 5.6 C++ source, Content assets, and cross-platform implementations.
+- [**C++ Level Classes & Blueprint Breakdown**](file:///c:/Unreal%20Projects/LearnUnreal_56_1/Docs/Folder%20Structure%20Summary.md)
+  - Focused breakdown of all C++ folders (`TopDown`, `Variant_Strategy`, `Variant_TwinStick`, `Flappy`, `Tetris`), class responsibilities, and mapping to Content Blueprint subclasses.
 - [**Scene Setup & Gameplay Guide**](file:///c:/Unreal%20Projects/LearnUnreal_56_1/Docs/SCENE_SETUP_AND_PLAY_GUIDE.md)
   - Step-by-step instructions on setting up levels (`.umap`), configuring lighting, setting GameMode overrides in World Settings, running in PIE, and tweaking gameplay values.
 - [**Unity Developer to Unreal C++ Rosetta Stone**](file:///c:/Unreal%20Projects/LearnUnreal_56_1/TUTORIAL_UNITY_TO_UNREAL.md)

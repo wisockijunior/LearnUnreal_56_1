@@ -150,3 +150,14 @@ In the **Content Browser** (`All > C++ Classes > LearnUnreal_56_1`), you will se
    Open any Blueprint in the Editor (e.g., `BP_TopDownCharacter`), look at the top-right corner of the window. It shows **Parent class: LearnUnreal_56_1Character**. Clicking that link opens the C++ header directly in your IDE.
 3. **Module Include Paths**:
    Whenever a new C++ subfolder is added, add it to `PublicIncludePaths` in `LearnUnreal_56_1.Build.cs` so `#include` statements can find headers directly without relative `../../` paths.
+
+---
+
+## 5. Cross-Platform Implementations & Workspace Reference
+
+For the complete tree covering the entire project root, assets, and cross-platform learning games, see [**Folder Structure.md**](file:///c:/Unreal%20Projects/LearnUnreal_56_1/Docs/Folder%20Structure.md):
+
+* 📁 [**`Games_Unity_CSharp/`**](file:///c:/Unreal%20Projects/LearnUnreal_56_1/Games_Unity_CSharp/README.md) — Unity3D C# implementations with explicit center-pivot offset calculations.
+* 📁 [**`Games_Python/`**](file:///c:/Unreal%20Projects/LearnUnreal_56_1/Games_Python/README.md) — Standalone zero-dependency Python 3 Tkinter games (60 FPS).
+* 📁 [**`Games_Java/`**](file:///c:/Unreal%20Projects/LearnUnreal_56_1/Games_Java/README.md) — Desktop Java 11 Swing implementations with double buffering.
+* 📁 [**`Games_JavaME_NokiaE63/`**](file:///c:/Unreal%20Projects/LearnUnreal_56_1/Games_JavaME_NokiaE63/README.md) — Authentic J2ME MIDP 2.0 / CLDC 1.1 games for Nokia E63 (320x240 landscape display, RMS flash persistence, hardware tone audio, and desktop simulator).
