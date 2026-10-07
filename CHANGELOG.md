@@ -29,3 +29,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `Docs/SCENE_SETUP_AND_PLAY_GUIDE.md`: Step-by-step scene creation, lighting, GameMode override assignment in World Settings, PIE testing, and Blueprint parameter customization guide for senior Unity developers.
   - `Docs/README.md`: Central documentation index and control cheat sheet.
   - `TUTORIAL_UNITY_TO_UNREAL.md`: Rosetta Stone mapping Unity concepts (`GameObject`, `MonoBehaviour`, `Update`, `[SerializeField]`, `Vector3`, `GameManager`) directly to Unreal Engine C++ equivalents (`AActor`, `UActorComponent`, `Tick`, `UPROPERTY`, `FVector`, `AGameModeBase`).
+
+### Fixed
+- Fixed compilation error `C2660: 'FGenericPlatformMath::SRand': function does not take 1 arguments` in `ATetrisBoardActor.cpp` by replacing it with `FMath::RandInit(FPlatformTime::Cycles())`.
