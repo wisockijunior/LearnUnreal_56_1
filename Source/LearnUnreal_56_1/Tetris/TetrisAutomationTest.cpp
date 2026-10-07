@@ -7,7 +7,7 @@
 
 #if WITH_DEV_AUTOMATION_TESTS
 
-IMPLEMENT_SIMPLE_AUTOMATION_TEST(FTetrisDropSimulationTest, "LearnUnreal.Tetris.DropSimulation", EAutomationTestFlags::ApplicationContextMask | EAutomationTestFlags::ProductFilter)
+IMPLEMENT_SIMPLE_AUTOMATION_TEST(FTetrisDropSimulationTest, "LearnUnreal.Tetris.DropSimulation", EAutomationTestFlags_ApplicationContextMask | EAutomationTestFlags::ProductFilter)
 
 bool FTetrisDropSimulationTest::RunTest(const FString& Parameters)
 {
