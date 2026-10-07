@@ -30,5 +30,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `Docs/README.md`: Central documentation index and control cheat sheet.
   - `TUTORIAL_UNITY_TO_UNREAL.md`: Rosetta Stone mapping Unity concepts (`GameObject`, `MonoBehaviour`, `Update`, `[SerializeField]`, `Vector3`, `GameManager`) directly to Unreal Engine C++ equivalents (`AActor`, `UActorComponent`, `Tick`, `UPROPERTY`, `FVector`, `AGameModeBase`).
 
+### Changed
+- Moved TopDown template C++ classes (`LearnUnreal_56_1Character`, `LearnUnreal_56_1GameMode`, `LearnUnreal_56_1PlayerController`) into dedicated `Source/LearnUnreal_56_1/TopDown/` folder and updated `PublicIncludePaths` in `LearnUnreal_56_1.Build.cs`.
+
 ### Fixed
 - Fixed compilation error `C2660: 'FGenericPlatformMath::SRand': function does not take 1 arguments` in `ATetrisBoardActor.cpp` by replacing it with `FMath::RandInit(FPlatformTime::Cycles())`.
