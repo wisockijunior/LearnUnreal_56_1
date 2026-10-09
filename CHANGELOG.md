@@ -45,6 +45,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Added `DROPS` statistic counter to `ATetrisHUD` directly below `LINES` and exposed `GetDropCount()` from `ATetrisBoardActor`.
   - Added strict key release-gate (`bCanHardDrop` reset on `IE_Released`) to `ATetrisPawn` preventing repeated drops while Space or Enter is held.
   - Cleared UnrealBuildTool `Log.txt` file lock to allow Live Coding compilation.
-- Fixed `C2838 'ApplicationContextMask'` build error in `TetrisAutomationTest.cpp` (UE 5.5+ renamed it to `EAutomationTestFlags_ApplicationContextMask`).
-- Added explanatory code comments on the hard-drop fix and new doc `Docs/TETRIS_HARD_DROP_FIX.md`.
+- Added Flappy Bird Complete Overhaul:
+  - Procedural 3D model parts: orange beak cone pointing in flight direction (+Y), white eye sphere, black pupil, and animated cream wing ellipsoid.
+  - Idle bobbing: smooth sine-wave vertical hover and gentle wing breathing in `Ready` state.
+  - Dynamic pitch tilt physics: snappy upward beak tilt on flap, smooth progressive downward nosedive when falling.
+  - Squash and stretch: punchy vertical stretch and horizontal squash on jump.
+  - Death tumble: pop-up death hop and rapid spinning crash tumble until settling on the floor.
 

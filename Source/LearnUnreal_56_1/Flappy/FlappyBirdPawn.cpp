@@ -17,32 +17,89 @@ AFlappyBirdPawn::AFlappyBirdPawn()
 	, VerticalVelocity(0.0f)
 	, bIsDead(false)
 	, StartLocation(FVector(0.0f, 0.0f, 0.0f))
+	, BobTimer(0.0f)
+	, SquashStretchTimer(0.0f)
+	, CurrentTiltAngle(0.0f)
+	, WingFlapTime(0.0f)
+	, DeathSpinAngle(0.0f)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
 	AutoPossessPlayer = EAutoReceiveInput::Player0;
 
-	// Root Sphere Collision
+	// Root Sphere Collision (exact physical boundary)
 	SphereCollision = CreateDefaultSubobject<USphereComponent>(TEXT("SphereCollision"));
 	SetRootComponent(SphereCollision);
 	SphereCollision->InitSphereRadius(24.0f);
 	SphereCollision->SetCollisionProfileName(TEXT("Pawn"));
 	SphereCollision->SetGenerateOverlapEvents(true);
 
-	// Sphere Mesh
-	BirdMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BirdMesh"));
-	BirdMesh->SetupAttachment(SphereCollision);
+	// BirdVisualRoot: Parent of all visual parts for unified tilt, squash, and stretch
+	BirdVisualRoot = CreateDefaultSubobject<USceneComponent>(TEXT("BirdVisualRoot"));
+	BirdVisualRoot->SetupAttachment(SphereCollision);
+
 	static ConstructorHelpers::FObjectFinder<UStaticMesh> SphereMeshFinder(TEXT("/Engine/BasicShapes/Sphere.Sphere"));
-	if (SphereMeshFinder.Succeeded())
+	static ConstructorHelpers::FObjectFinder<UStaticMesh> ConeMeshFinder(TEXT("/Engine/BasicShapes/Cone.Cone"));
+	UStaticMesh* SphereMesh = SphereMeshFinder.Succeeded() ? SphereMeshFinder.Object : nullptr;
+	UStaticMesh* ConeMesh = ConeMeshFinder.Succeeded() ? ConeMeshFinder.Object : nullptr;
+
+	static ConstructorHelpers::FObjectFinder<UMaterialInterface> MatFinder(TEXT("/Engine/BasicShapes/BasicShapeMaterial.BasicShapeMaterial"));
+	BaseMaterial = MatFinder.Succeeded() ? MatFinder.Object : nullptr;
+
+	// 1. Body Sphere Mesh (Golden-Yellow body)
+	BirdMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BirdMesh"));
+	BirdMesh->SetupAttachment(BirdVisualRoot);
+	if (SphereMesh)
 	{
-		BirdMesh->SetStaticMesh(SphereMeshFinder.Object);
+		BirdMesh->SetStaticMesh(SphereMesh);
 	}
 	BirdMesh->SetWorldScale3D(FVector(0.48f, 0.48f, 0.48f));
 	BirdMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
-	// Material
-	static ConstructorHelpers::FObjectFinder<UMaterialInterface> MatFinder(TEXT("/Engine/BasicShapes/BasicShapeMaterial.BasicShapeMaterial"));
-	BaseMaterial = MatFinder.Succeeded() ? MatFinder.Object : nullptr;
+	// 2. Beak Cone Mesh (Orange beak pointing forward along +Y)
+	BeakMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("BeakMesh"));
+	BeakMesh->SetupAttachment(BirdVisualRoot);
+	if (ConeMesh)
+	{
+		BeakMesh->SetStaticMesh(ConeMesh);
+	}
+	BeakMesh->SetRelativeLocation(FVector(0.0f, 22.0f, -3.0f));
+	BeakMesh->SetRelativeRotation(FRotator(0.0f, 0.0f, -90.0f)); // Points tip along +Y (forward flight)
+	BeakMesh->SetWorldScale3D(FVector(0.14f, 0.14f, 0.22f));
+	BeakMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	// 3. Eye White Sphere (facing camera on -X, upper front)
+	EyeMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("EyeMesh"));
+	EyeMesh->SetupAttachment(BirdVisualRoot);
+	if (SphereMesh)
+	{
+		EyeMesh->SetStaticMesh(SphereMesh);
+	}
+	EyeMesh->SetRelativeLocation(FVector(-14.0f, 10.0f, 8.0f));
+	EyeMesh->SetWorldScale3D(FVector(0.18f, 0.18f, 0.18f));
+	EyeMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	// 4. Pupil Black Sphere
+	PupilMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PupilMesh"));
+	PupilMesh->SetupAttachment(BirdVisualRoot);
+	if (SphereMesh)
+	{
+		PupilMesh->SetStaticMesh(SphereMesh);
+	}
+	PupilMesh->SetRelativeLocation(FVector(-19.0f, 13.0f, 8.0f));
+	PupilMesh->SetWorldScale3D(FVector(0.09f, 0.09f, 0.09f));
+	PupilMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+	// 5. Wing Mesh (Flattened ellipsoid on side facing camera)
+	WingMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("WingMesh"));
+	WingMesh->SetupAttachment(BirdVisualRoot);
+	if (SphereMesh)
+	{
+		WingMesh->SetStaticMesh(SphereMesh);
+	}
+	WingMesh->SetRelativeLocation(FVector(-16.0f, -5.0f, -2.0f));
+	WingMesh->SetWorldScale3D(FVector(0.10f, 0.26f, 0.18f));
+	WingMesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	// Camera locked looking down +X at origin
 	SideViewCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("SideViewCamera"));
@@ -61,14 +118,46 @@ void AFlappyBirdPawn::BeginPlay()
 	SideViewCamera->SetWorldLocation(FVector(-850.0f, 0.0f, 0.0f));
 	SideViewCamera->SetWorldRotation(FRotator(0.0f, 0.0f, 0.0f));
 
-	// Yellow bird material
 	if (BaseMaterial)
 	{
-		UMaterialInstanceDynamic* BirdMat = UMaterialInstanceDynamic::Create(BaseMaterial, this);
-		if (BirdMat)
+		// 1. Body: Warm Golden-Yellow
+		UMaterialInstanceDynamic* BodyMat = UMaterialInstanceDynamic::Create(BaseMaterial, this);
+		if (BodyMat)
 		{
-			BirdMat->SetVectorParameterValue(TEXT("Color"), FLinearColor(1.0f, 0.85f, 0.05f, 1.0f));
-			BirdMesh->SetMaterial(0, BirdMat);
+			BodyMat->SetVectorParameterValue(TEXT("Color"), FLinearColor(1.0f, 0.85f, 0.05f, 1.0f));
+			BirdMesh->SetMaterial(0, BodyMat);
+		}
+
+		// 2. Beak: Vibrant Orange
+		UMaterialInstanceDynamic* BeakMat = UMaterialInstanceDynamic::Create(BaseMaterial, this);
+		if (BeakMat)
+		{
+			BeakMat->SetVectorParameterValue(TEXT("Color"), FLinearColor(1.0f, 0.45f, 0.0f, 1.0f));
+			BeakMesh->SetMaterial(0, BeakMat);
+		}
+
+		// 3. Eye: Clean White
+		UMaterialInstanceDynamic* EyeMat = UMaterialInstanceDynamic::Create(BaseMaterial, this);
+		if (EyeMat)
+		{
+			EyeMat->SetVectorParameterValue(TEXT("Color"), FLinearColor(1.0f, 1.0f, 1.0f, 1.0f));
+			EyeMesh->SetMaterial(0, EyeMat);
+		}
+
+		// 4. Pupil: Deep Black
+		UMaterialInstanceDynamic* PupilMat = UMaterialInstanceDynamic::Create(BaseMaterial, this);
+		if (PupilMat)
+		{
+			PupilMat->SetVectorParameterValue(TEXT("Color"), FLinearColor(0.02f, 0.02f, 0.02f, 1.0f));
+			PupilMesh->SetMaterial(0, PupilMat);
+		}
+
+		// 5. Wing: Cream / Light Feather
+		UMaterialInstanceDynamic* WingMat = UMaterialInstanceDynamic::Create(BaseMaterial, this);
+		if (WingMat)
+		{
+			WingMat->SetVectorParameterValue(TEXT("Color"), FLinearColor(1.0f, 0.96f, 0.72f, 1.0f));
+			WingMesh->SetMaterial(0, WingMat);
 		}
 	}
 }
@@ -77,7 +166,7 @@ void AFlappyBirdPawn::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	// Foolproof input polling for instant responsiveness
+	// Direct input polling for responsive jumps and restarts
 	APlayerController* PC = Cast<APlayerController>(GetController());
 	if (PC)
 	{
@@ -100,14 +189,41 @@ void AFlappyBirdPawn::Tick(float DeltaTime)
 		return;
 	}
 
-	if (GM->GetFlappyState() == EFlappyGameState::Playing || bIsDead)
+	const EFlappyGameState State = GM->GetFlappyState();
+
+	// =========================================================================
+	// STATE 1: READY (Idle hover bobbing & gentle wing breathing)
+	// =========================================================================
+	if (State == EFlappyGameState::Ready)
 	{
-		// Apply gravity
+		BobTimer += DeltaTime;
+		const float BobZ = FMath::Sin(BobTimer * 5.0f) * 14.0f;
+		FVector IdleLoc = StartLocation;
+		IdleLoc.Z += BobZ;
+		SetActorLocation(IdleLoc);
+
+		// Smoothly restore upright posture and scale
+		CurrentTiltAngle = FMath::FInterpTo(CurrentTiltAngle, 0.0f, DeltaTime, 8.0f);
+		BirdVisualRoot->SetRelativeRotation(FRotator(0.0f, 0.0f, CurrentTiltAngle));
+		BirdVisualRoot->SetRelativeScale3D(FVector::OneVector);
+
+		// Gentle resting wing breathing
+		const float WingBob = FMath::Sin(BobTimer * 7.0f) * 10.0f;
+		WingMesh->SetRelativeRotation(FRotator(0.0f, 0.0f, WingBob));
+		return;
+	}
+
+	// =========================================================================
+	// STATE 2: PLAYING or DEAD (Physics, falling, dynamic tilt, wing flap, squash/stretch)
+	// =========================================================================
+	if (State == EFlappyGameState::Playing || bIsDead)
+	{
+		// 1. Gravity and Vertical Movement
 		VerticalVelocity += Gravity * DeltaTime;
 		FVector Loc = GetActorLocation();
 		Loc.Z += VerticalVelocity * DeltaTime;
 
-		// Check floor
+		// Floor collision
 		if (Loc.Z <= FloorZ)
 		{
 			Loc.Z = FloorZ;
@@ -117,7 +233,7 @@ void AFlappyBirdPawn::Tick(float DeltaTime)
 			}
 		}
 
-		// Check ceiling
+		// Ceiling collision
 		if (Loc.Z >= CeilingZ)
 		{
 			Loc.Z = CeilingZ;
@@ -126,10 +242,69 @@ void AFlappyBirdPawn::Tick(float DeltaTime)
 
 		SetActorLocation(Loc, true);
 
-		// Roll rotation in Y-Z plane according to velocity (tilts beak up when jumping, down when dropping)
-		const float ClampedVel = FMath::Clamp(VerticalVelocity, -900.0f, 600.0f);
-		const float RollAngle = -ClampedVel * 0.08f;
-		BirdMesh->SetRelativeRotation(FRotator(0.0f, 0.0f, RollAngle));
+		// 2. Pitch / Tilt Rotation in Y-Z plane
+		if (bIsDead)
+		{
+			// Tumble spin when dead until resting on floor
+			if (Loc.Z > FloorZ)
+			{
+				DeathSpinAngle += 650.0f * DeltaTime;
+				BirdVisualRoot->SetRelativeRotation(FRotator(0.0f, 0.0f, DeathSpinAngle));
+			}
+			else
+			{
+				// Settle nose-down on the floor
+				BirdVisualRoot->SetRelativeRotation(FRotator(0.0f, 0.0f, 90.0f));
+			}
+		}
+		else
+		{
+			// Dynamic tilt physics:
+			// Ascending (Velocity > 0): snaps upward (-28 deg).
+			// Descending (Velocity < 0): progressively dives downward (+75 deg).
+			float TargetRoll = 0.0f;
+			if (VerticalVelocity > 50.0f)
+			{
+				TargetRoll = -28.0f; // Beak points up
+			}
+			else
+			{
+				const float DropRatio = FMath::Clamp(-VerticalVelocity / 800.0f, 0.0f, 1.0f);
+				TargetRoll = FMath::Lerp(0.0f, 75.0f, DropRatio);
+			}
+
+			const float InterpSpeed = (VerticalVelocity > 0.0f) ? 14.0f : 5.0f;
+			CurrentTiltAngle = FMath::FInterpTo(CurrentTiltAngle, TargetRoll, DeltaTime, InterpSpeed);
+			BirdVisualRoot->SetRelativeRotation(FRotator(0.0f, 0.0f, CurrentTiltAngle));
+		}
+
+		// 3. Squash and Stretch on Jump
+		if (SquashStretchTimer > 0.0f)
+		{
+			SquashStretchTimer -= DeltaTime;
+			const float Alpha = FMath::Clamp(SquashStretchTimer / 0.18f, 0.0f, 1.0f);
+			// Stretch along Z (vertical jump), squash along Y
+			const float ScaleZ = 1.0f + 0.22f * Alpha;
+			const float ScaleY = 1.0f - 0.16f * Alpha;
+			BirdVisualRoot->SetRelativeScale3D(FVector(1.0f, ScaleY, ScaleZ));
+		}
+		else
+		{
+			BirdVisualRoot->SetRelativeScale3D(FVector::OneVector);
+		}
+
+		// 4. Wing Flap Animation
+		if (WingFlapTime > 0.0f)
+		{
+			WingFlapTime -= DeltaTime;
+			const float FlapProgress = 1.0f - (WingFlapTime / 0.22f);
+			const float FlapAngle = FMath::Sin(FlapProgress * PI * 2.0f) * 35.0f;
+			WingMesh->SetRelativeRotation(FRotator(0.0f, 0.0f, FlapAngle));
+		}
+		else
+		{
+			WingMesh->SetRelativeRotation(FRotator::ZeroRotator);
+		}
 	}
 }
 
@@ -159,10 +334,14 @@ void AFlappyBirdPawn::Flap()
 	{
 		GM->StartGame();
 		VerticalVelocity = FlapStrength;
+		SquashStretchTimer = 0.18f;
+		WingFlapTime = 0.22f;
 	}
 	else if (GM->GetFlappyState() == EFlappyGameState::Playing && !bIsDead)
 	{
 		VerticalVelocity = FlapStrength;
+		SquashStretchTimer = 0.18f;
+		WingFlapTime = 0.22f;
 	}
 	else if (GM->GetFlappyState() == EFlappyGameState::GameOver)
 	{
@@ -178,7 +357,8 @@ void AFlappyBirdPawn::Die()
 	}
 
 	bIsDead = true;
-	VerticalVelocity = -200.0f; // slight downward bump
+	VerticalVelocity = 250.0f; // Classic death hop up before falling
+	DeathSpinAngle = CurrentTiltAngle;
 
 	if (AFlappyGameMode* GM = Cast<AFlappyGameMode>(UGameplayStatics::GetGameMode(this)))
 	{
@@ -201,6 +381,13 @@ void AFlappyBirdPawn::ResetBird()
 {
 	bIsDead = false;
 	VerticalVelocity = 0.0f;
+	BobTimer = 0.0f;
+	SquashStretchTimer = 0.0f;
+	CurrentTiltAngle = 0.0f;
+	WingFlapTime = 0.0f;
+	DeathSpinAngle = 0.0f;
 	SetActorLocation(StartLocation);
-	BirdMesh->SetRelativeRotation(FRotator::ZeroRotator);
+	BirdVisualRoot->SetRelativeRotation(FRotator::ZeroRotator);
+	BirdVisualRoot->SetRelativeScale3D(FVector::OneVector);
+	WingMesh->SetRelativeRotation(FRotator::ZeroRotator);
 }

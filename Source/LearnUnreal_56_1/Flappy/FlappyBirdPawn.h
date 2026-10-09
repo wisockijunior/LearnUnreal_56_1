@@ -34,8 +34,29 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	USphereComponent* SphereCollision;
 
+	/** Visual root holding all bird geometry for unified tilt, squash, and stretch */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	USceneComponent* BirdVisualRoot;
+
+	/** Main body (yellow sphere) */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UStaticMeshComponent* BirdMesh;
+
+	/** Orange beak pointing forward (+Y) */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UStaticMeshComponent* BeakMesh;
+
+	/** Eye white */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UStaticMeshComponent* EyeMesh;
+
+	/** Eye pupil */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UStaticMeshComponent* PupilMesh;
+
+	/** Animated wing */
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
+	UStaticMeshComponent* WingMesh;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	UCameraComponent* SideViewCamera;
@@ -59,4 +80,11 @@ private:
 	float VerticalVelocity;
 	bool bIsDead;
 	FVector StartLocation;
+
+	// Animation & Game Feel
+	float BobTimer;
+	float SquashStretchTimer;
+	float CurrentTiltAngle;
+	float WingFlapTime;
+	float DeathSpinAngle;
 };
