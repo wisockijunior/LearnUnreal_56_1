@@ -1,22 +1,26 @@
 # Cross-Language Game Architecture Comparison
 
-This document provides a comprehensive side-by-side architectural and code comparison of **Flappy Bird** and **Tetris** implemented across four technology stacks:
+This document provides a comprehensive side-by-side architectural and code comparison of **Flappy Bird** and **Tetris** implemented across seven technology stacks:
 1. **Unreal Engine 5.6 (C++)** (`Source/LearnUnreal_56_1/`)
-2. **Unity3D (C#)** (`Games_Unity_CSharp/`)
-3. **Python (Tkinter)** (`Games_Python/`)
-4. **Java (Swing / AWT)** (`Games_Java/`)
+2. **Unreal Verse (UEFN)** (`Games_Verse/`)
+3. **Rust** (`Games_Rust/`)
+4. **Go (Golang)** (`Games_Go/`)
+5. **Unity3D (C#)** (`Games_Unity_CSharp/`)
+6. **Python (Tkinter)** (`Games_Python/`)
+7. **Java (Swing & Nokia E63 J2ME)** (`Games_Java/` & `Games_JavaME_NokiaE63/`)
 
 ---
 
 ## 1. High-Level Paradigm & Architecture
 
-| Feature | Unreal Engine 5.6 (C++) | Unity3D (C#) | Python (Tkinter) | Java (Swing) |
-| :--- | :--- | :--- | :--- | :--- |
-| **Paradigm** | Actor-Component & GameMode Framework | Entity-Component-System (`GameObject` / `MonoBehaviour`) | Object-Oriented Scripting with Event-Driven GUI | Object-Oriented Framework with Event Dispatch Thread (EDT) |
-| **Language** | C++17 / C++20 with Unreal Reflection (`UCLASS`, `UPROPERTY`) | C# 9 / 10 (.NET / Mono / IL2CPP) | Python 3 (Dynamic, Interpreted) | Java 11+ (Bytecode, JVM) |
-| **Memory Model** | Manual C++ memory + Unreal Garbage Collector for `UObject*` | .NET Garbage Collector (Boehm GC / Incremental GC) | Python GC (Reference Counting + Cyclic Garbage Collector) | JVM Generational Garbage Collector (G1 / ZGC) |
-| **Game Loop** | Native Engine Loop calling `Tick(float DeltaTime)` | Native Engine Loop calling `Update()` / `FixedUpdate()` | Recursive UI Event Callback `root.after(16, loop)` | `javax.swing.Timer` (16ms) triggering `actionPerformed` on EDT |
-| **Dependencies** | Unreal Engine 5.6 Editor & Build Tool (UBT) | Unity Editor (2019 / 2021 / 2022 LTS) | **None** (Built-in standard library) | **None** (Standard JDK `javac` / `java`) |
+| Feature | Unreal Engine 5.6 (C++) | Unreal Verse (UEFN) | Rust | Go (Golang) | Unity3D (C#) | Python (Tkinter) | Java (Swing) |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Paradigm** | Actor-Component & GameMode Framework | Functional-Logic (Transactional) | Systems (Ownership / Borrowing) | Procedural & CSP Concurrency | Entity-Component-System (`MonoBehaviour`) | Scripting with Event-Driven GUI | OOP with Event Dispatch Thread |
+| **Language** | C++17 / C++20 | Verse (Epic Games) | Rust (2021 Edition) | Go 1.26 | C# 9 / 10 | Python 3 | Java 11+ / J2ME MIDP 2.0 |
+| **Memory Model** | UObject GC + Manual RAII | Managed engine value types | Strict Borrow Checker (Zero GC) | Concurrent Tri-Color GC | .NET Garbage Collector | Reference Counting + Cyclic GC | JVM Generational GC / RMS |
+| **Game Loop** | Native `Tick(float DeltaTime)` | Coroutine `GameLoop()<suspends>` | Deterministic `Instant::now()` loop | Concurrent `time.NewTicker` | Native `Update()` / `FixedUpdate()` | `root.after(16, loop)` | `javax.swing.Timer` (16ms) |
+| **Dependencies** | Unreal 5.6 Editor & UBT | UEFN Verse Compiler | Cargo (`crossterm`) | **None** (Standard Library) | Unity Editor | **None** (Standard Library) | **None** (Standard JDK) |
+
 
 ---
 

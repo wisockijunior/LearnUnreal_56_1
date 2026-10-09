@@ -157,6 +157,9 @@ In the **Content Browser** (`All > C++ Classes > LearnUnreal_56_1`), you will se
 
 For the complete tree covering the entire project root, assets, and cross-platform learning games, see [**Folder Structure.md**](file:///c:/Unreal%20Projects/LearnUnreal_56_1/Docs/Folder%20Structure.md):
 
+* 📁 [**`Games_Verse/`**](file:///c:/Unreal%20Projects/LearnUnreal_56_1/Games_Verse/README.md) — Unreal Engine / UEFN Verse implementations using async loops, failable `<decides>`, and transactions `<transacts>`.
+* 📁 [**`Games_Rust/`**](file:///c:/Unreal%20Projects/LearnUnreal_56_1/Games_Rust/README.md) — Pure Rust implementations featuring ownership/borrowing, zero GC, and crossterm TUI rendering.
+* 📁 [**`Games_Go/`**](file:///c:/Unreal%20Projects/LearnUnreal_56_1/Games_Go/README.md) — Zero-dependency Go (Golang) implementations utilizing goroutines, tickers, and Windows console integration.
 * 📁 [**`Games_Unity_CSharp/`**](file:///c:/Unreal%20Projects/LearnUnreal_56_1/Games_Unity_CSharp/README.md) — Unity3D C# implementations with explicit center-pivot offset calculations.
 * 📁 [**`Games_Python/`**](file:///c:/Unreal%20Projects/LearnUnreal_56_1/Games_Python/README.md) — Standalone zero-dependency Python 3 Tkinter games (60 FPS).
 * 📁 [**`Games_Java/`**](file:///c:/Unreal%20Projects/LearnUnreal_56_1/Games_Java/README.md) — Desktop Java 11 Swing implementations with double buffering.

@@ -20,6 +20,12 @@ This repository includes two games implemented entirely in C++ for Unreal Engine
   - Full conceptual comparison between Unity and Unreal (`GameObject` $\leftrightarrow$ `AActor`, `MonoBehaviour` $\leftrightarrow$ `UActorComponent`, `Update` $\leftrightarrow$ `Tick`, etc.), coordinate system specifics (Centimeters, $Z$-Up), and code breakdowns.
 - [**Cross-Language Architecture Comparison Guide**](file:///c:/Unreal%20Projects/LearnUnreal_56_1/ARCHITECTURE_COMPARISON.md)
   - Side-by-side comparison of **Flappy Bird** and **Tetris** implemented across **Unreal C++**, **Unity C#**, **Python (Tkinter)**, and **Java (Swing)**, including coordinate conversions, pivot checks, memory management, and game loop lifecycles.
+- [**Unreal Verse (UEFN) Implementations**](file:///c:/Unreal%20Projects/LearnUnreal_56_1/Games_Verse/README.md)
+  - Native Epic Games Verse implementations utilizing structured async loops, transactional state `<transacts>`, and failable tests `<decides>`.
+- [**Rust Implementations**](file:///c:/Unreal%20Projects/LearnUnreal_56_1/Games_Rust/README.md)
+  - High-performance, zero-GC systems implementations featuring ownership/borrowing and crossterm TUI rendering.
+- [**Go (Golang) Implementations**](file:///c:/Unreal%20Projects/LearnUnreal_56_1/Games_Go/README.md)
+  - Zero-dependency Go implementations with concurrent goroutines, tickers, and Windows console integration.
 - [**Unity3D C# Implementations**](file:///c:/Unreal%20Projects/LearnUnreal_56_1/Games_Unity_CSharp/README.md)
   - Ready-to-import Unity C# scripts for both games with explicit center-pivot offset calculations.
 - [**Python Implementations**](file:///c:/Unreal%20Projects/LearnUnreal_56_1/Games_Python/README.md)
@@ -28,6 +34,7 @@ This repository includes two games implemented entirely in C++ for Unreal Engine
   - Standalone, pre-compiled Java Swing games with automatic build & run scripts.
 - [**Nokia E63 J2ME (MIDP 2.0 / CLDC 1.1) Implementations**](file:///c:/Unreal%20Projects/LearnUnreal_56_1/Games_JavaME_NokiaE63/README.md)
   - Authentic 320x240 landscape J2ME games for Nokia E63 (Symbian S60 3rd Ed.), packaged `.jar` / `.jad` files, and interactive desktop hardware simulator.
+
 
 ---
 

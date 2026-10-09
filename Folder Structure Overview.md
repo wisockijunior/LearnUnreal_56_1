@@ -6,6 +6,29 @@ LearnUnreal_56_1/
 │   ├── Flappy/                      # AFlappyBirdPawn, AFlappyPipePair, AFlappyGameMode, AFlappyHUD
 │   └── Tetris/                      # ATetrisBoardActor, ATetrisPawn, ATetrisGameMode, ATetrisHUD
 │
+├── Games_Verse/                     # Unreal Engine / UEFN (Verse Language)
+│   ├── FlappyBird/
+│   │   └── flappy_bird_device.verse # Creative device: async physics loop, dynamic pipes, collisions
+│   ├── Tetris/
+│   │   └── tetris_device.verse      # Creative device: 10x20 grid, 7 tetrominoes, wall kicks, line clear
+│   └── README.md                    # Verse language guide: <decides>, <transacts>, <suspends>, UEFN setup
+│
+├── Games_Rust/                      # Rust (Systems, Zero-GC, Memory-Safe)
+│   ├── FlappyBird/
+│   │   ├── Cargo.toml               # Package configuration & dependencies
+│   │   └── src/main.rs              # 60 FPS physics loop, AABB collision, ANSI TUI
+│   ├── Tetris/
+│   │   ├── Cargo.toml               # Package configuration & dependencies
+│   │   └── src/main.rs              # 10x20 grid, 7 tetrominoes, wall kicks, ghost piece, line clear
+│   └── README.md                    # Rust guide: ownership/borrowing, zero-cost abstractions, cargo run
+│
+├── Games_Go/                        # Go / Golang (Zero Dependencies, Concurrency)
+│   ├── FlappyBird/
+│   │   └── main.go                  # 60 FPS physics loop, goroutines, tickers, ANSI TUI (go run)
+│   ├── Tetris/
+│   │   └── main.go                  # 10x20 grid, 7 tetrominoes, wall kicks, ghost piece (go run)
+│   └── README.md                    # Go guide: goroutines, channels, value semantics, Windows console
+│
 ├── Games_Unity_CSharp/              # Unity3D (C#)
 │   ├── FlappyBird/Scripts/
 │   │   ├── BirdController.cs        # Flap impulse, gravity, pitch tilt, AABB/colliders

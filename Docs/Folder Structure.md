@@ -37,6 +37,11 @@ c:\Unreal Projects\LearnUnreal_56_1\
 │   ├── Folder Structure Summary.md      # Summary breakdown of C++ classes and levels
 │   └── SCENE_SETUP_AND_PLAY_GUIDE.md    # Step-by-step scene creation & PIE testing guide
 │
+├── Games_Go/                            # Zero-dependency Go (Golang) games
+│   ├── FlappyBird/                      # Standalone 60 FPS physics Flappy Bird (main.go)
+│   ├── Tetris/                          # 10x20 grid Tetris with ghost piece (main.go)
+│   └── README.md
+│
 ├── Games_Java/                          # Standalone desktop Java 11 (Swing / AWT) games
 │   ├── FlappyBird/                      # Double-buffered 60 FPS Flappy Bird GUI + run.bat
 │   ├── Tetris/                          # 10x20 grid Tetris with ghost piece + run.bat
@@ -59,12 +64,23 @@ c:\Unreal Projects\LearnUnreal_56_1\
 │   ├── Tetris/                          # 10x20 grid Tetris with ghost piece & preview (tetris.py)
 │   └── README.md
 │
+├── Games_Rust/                          # Pure Rust (Systems, Zero-GC, Memory-Safe) games
+│   ├── FlappyBird/                      # 60 FPS physics loop, AABB collision, ANSI TUI
+│   ├── Tetris/                          # 10x20 grid, 7 tetrominoes, wall kicks, ghost piece
+│   └── README.md
+│
 ├── Games_Unity_CSharp/                  # Unity3D C# implementations
 │   ├── FlappyBird/Scripts/              # Modular scripts with center-pivot offset calculations
 │   ├── Tetris/Scripts/                  # 10x20 matrix, rotation states, immediate-mode OnGUI
 │   └── README.md
 │
+├── Games_Verse/                         # Unreal Engine / UEFN (Verse Language) games
+│   ├── FlappyBird/                      # Creative device: async physics loop, dynamic pipes
+│   ├── Tetris/                          # Creative device: 10x20 grid, failable tests (<decides>)
+│   └── README.md
+│
 └── Source/                              # Unreal Engine 5.6 C++ Source Code
+
     └── LearnUnreal_56_1/
         ├── LearnUnreal_56_1.Build.cs    # UBT module build rules and include paths
         ├── LearnUnreal_56_1.cpp         # Primary game module implementation

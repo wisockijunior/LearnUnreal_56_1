@@ -1,0 +1,9 @@
+[package]
+name = "tetris"
+version = "0.1.0"
+edition = "2021"
+authors = ["Renato <learn_unreal@example.com>"]
+description = "Tetris implemented in pure idiomatic Rust for learning and cross-platform comparison"
+
+[dependencies]
+crossterm = "0.28"
