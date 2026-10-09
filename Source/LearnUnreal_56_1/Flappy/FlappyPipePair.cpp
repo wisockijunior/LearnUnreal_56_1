@@ -122,18 +122,45 @@ void AFlappyPipePair::SetupPipes(float InGapCenterZ, float InGapSize, float InSp
 	ScoreTrigger->SetBoxExtent(FVector(50.0f, 20.0f, HalfGap));
 }
 
+// =====================================================================================
+// SCORE TRIGGER OVERLAP HANDLER
+// 
+// Unity Analogy:
+//   void OnTriggerEnter(Collider other) {
+//       if (bScoreGiven) return;
+//       FlappyBird bird = other.GetComponent<FlappyBird>();
+//       if (bird != null && !bird.IsDead) {
+//           bScoreGiven = true;
+//           GameManager.Instance.AddScore(1);
+//       }
+//   }
+//
+// How Unreal handles it:
+// 1. Bound to ScoreTrigger->OnComponentBeginOverlap in BeginPlay().
+// 2. Fires when an actor (OtherActor) enters the invisible box volume positioned in the gap.
+// 3. Guards against multiple scoring via bScoreGiven flag (idempotent).
+// 4. Validates the intruder is specifically the player's bird (Cast<AFlappyBirdPawn>).
+// 5. Ensures the bird is alive (no points awarded if bird crashed and tumbled through).
+// 6. Calls the level's GameMode (AFlappyGameMode) to increment score and update HUD.
+// =====================================================================================
 void AFlappyPipePair::OnScoreTriggerOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
+	// Step 1: Idempotency check -- each pipe obstacle must award points exactly once.
 	if (bScoreGiven)
 	{
 		return;
 	}
 
+	// Step 2: Type verification -- ensure the overlapping actor is the player's Bird
+	// (Cast<T> is Unreal's safe dynamic cast; returns nullptr if OtherActor is not AFlappyBirdPawn).
 	AFlappyBirdPawn* Bird = Cast<AFlappyBirdPawn>(OtherActor);
 	if (Bird && !Bird->IsDead())
 	{
+		// Step 3: Mark this pipe as scored so subsequent frames or multiple overlapping components won't re-trigger
 		bScoreGiven = true;
+
+		// Step 4: Locate the active GameMode and notify it to add 1 point
 		if (AFlappyGameMode* GM = Cast<AFlappyGameMode>(UGameplayStatics::GetGameMode(this)))
 		{
 			GM->AddScore(1);

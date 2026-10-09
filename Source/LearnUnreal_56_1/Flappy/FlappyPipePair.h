@@ -22,7 +22,11 @@ public:
 	/** Configure vertical gap position and gap size */
 	void SetupPipes(float InGapCenterZ, float InGapSize, float InSpeed);
 
-	/** Called when bird passes through score zone */
+	/** 
+	 * Trigger overlap callback: Fires when an actor enters the invisible scoring box between the pipes.
+	 * (Unity equivalent: OnTriggerEnter(Collider other)).
+	 * Must be marked UFUNCTION() to bind to the OnComponentBeginOverlap dynamic multicast delegate.
+	 */
 	UFUNCTION()
 	void OnScoreTriggerOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
